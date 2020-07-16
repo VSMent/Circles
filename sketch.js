@@ -15,7 +15,6 @@ function init() {
 }
 
 function drawCircles() {
-  stroke(5);
   for (let i = 0; i < circles.length; i++) {
     circles[i].draw();
   }

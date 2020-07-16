@@ -7,12 +7,16 @@ class Circle {
     this.isMain = isMain;
     if (isMain) {
       this.radius = 1.5 * this.baseRadius;
-    }else{
+    } else {
       this.radius = this.baseRadius;
     }
   }
 
   draw() {
+    push();
+    stroke(5);
+    fill(255, 204, 0);
     ellipse(this.x, this.y, this.radius);
+    pop();
   }
 }
