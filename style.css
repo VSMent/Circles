@@ -1,0 +1,13 @@
+* {
+  margin: 0px;
+  padding: 0px; }
+
+canvas {
+  margin: 0px; }
+
+#m_coords {
+  position: fixed;
+  top: 0px;
+  right: 50px; }
+
+/*# sourceMappingURL=style.css.map */
