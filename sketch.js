@@ -1,12 +1,23 @@
 function setup() {
-	createCanvas(400, 400);
+  createCanvas(800, 600);
+  init();
 }
 
 function draw() {
-	if (mouseIsPressed) {
-		fill(0);
-	} else {
-		fill(255);
-	}
-	ellipse(mouseX, mouseY, 80, 80);
+  drawCircles();
 }
+
+let circles = [];
+
+function init() {
+  circles.push(new Circle(400, 300, true));
+  circles.push(new Circle(200, 100, false));
+}
+
+function drawCircles() {
+  stroke(5);
+  for (let i = 0; i < circles.length; i++) {
+    circles[i].draw();
+  }
+}
+
