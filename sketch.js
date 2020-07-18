@@ -6,6 +6,7 @@ function setup() {
 }
 
 function draw() {
+  updatePositions();
   drawLines();
   drawCircles();
 }
@@ -18,6 +19,12 @@ function init() {
     new Circle(Math.floor((Math.random() * (800 - padding * 2)) + padding), Math.floor((Math.random() * (600 - padding * 2)) + padding), false);
   }
   circles = Circle.circles;
+}
+
+function updatePositions() {
+  for (let i = 0; i < circles.length; i++) {
+    circles[i].updatePosition();
+  }
 }
 
 function drawLines() {
