@@ -1,22 +1,34 @@
 function setup() {
   createCanvas(800, 600);
   init();
+  console.log(circles);
+  noLoop();
 }
 
 function draw() {
+  drawLines();
   drawCircles();
 }
 
-let circles = [];
+let circles;
 
 function init() {
-  circles.push(new Circle(400, 300, true));
-  circles.push(new Circle(200, 100, false));
+  let padding = 50;
+  for (let i = 0; i < 20; i++) {
+    new Circle(Math.floor((Math.random() * (800 - padding * 2)) + padding), Math.floor((Math.random() * (600 - padding * 2)) + padding), false);
+  }
+  circles = Circle.circles;
+}
+
+function drawLines() {
+  for (let i = 0; i < circles.length; i++) {
+    circles[i].drawLine();
+  }
 }
 
 function drawCircles() {
   for (let i = 0; i < circles.length; i++) {
-    circles[i].draw();
+    circles[i].draw(i);
   }
 }
 
