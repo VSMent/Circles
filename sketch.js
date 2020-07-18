@@ -25,7 +25,7 @@ function init() {
   Circle.mainCircle = new Circle(width / 2, height / 2, true);
 
   for (let i = 0; i < 30; i++) {
-    new Circle(Math.floor((Math.random() * (width - bounds * 2)) + bounds), Math.floor((Math.random() * (height - bounds * 2)) + bounds), false);
+    new Circle(Math.floor((Math.random() * (width - bounds * 2)) + bounds), Math.floor((Math.random() * (height - bounds * 2)) + bounds));
   }
   circles = Circle.circles;
 
@@ -65,3 +65,20 @@ function drawGrid(step = 10) {
   pop();
 }
 
+function mouseDragged(event) {
+  if (mouseButton === LEFT) {
+    for (let i = 0; i < circles.length; i++) {
+      circles[i].drag();
+    }
+  }
+  return false;
+}
+
+function mouseReleased(event) {
+  if (mouseButton === LEFT) {
+    for (let i = 0; i < circles.length; i++) {
+      circles[i].isDragged = false;
+    }
+  }
+  return false;
+}

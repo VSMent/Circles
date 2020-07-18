@@ -4,6 +4,11 @@ class Circle {
   strokeWidth = 3;
   repelSpeed = 1;
   attractRadius = 0;
+  bodyColor = color(255, 204, 0);
+  repelColor = color(251, 202, 251, 170);
+  attractColor = color(202, 251, 222, 100);
+  bodyHoverColor = color(204, 163, 0);
+  isDragged = false;
   static minX = 0;
   static maxX = 100;
   static minY = 0;
@@ -24,17 +29,17 @@ class Circle {
     Circle.circles.push(this);
   }
 
-  updatePositions(i) {
-    this.checkBounds(i);
-    // if (this !== Circle.mainCircle) {
-    this.repelNeighbours();
-    // }
+  updatePositions() {
+    if (!this.isDragged) {
+      this.checkBounds();
+      this.repelNeighbours();
+    }
     if (this === Circle.mainCircle) {
       this.attractNeighbours();
     }
   }
 
-  checkBounds(i) {
+  checkBounds() {
     let dx = 0, dy = 0;
 
     // X <, >
@@ -57,7 +62,7 @@ class Circle {
 
   repelNeighbours() {
     for (let circle of Circle.circles) {
-      if (circle !== this && circle !== Circle.mainCircle) {
+      if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
         let distance = int(this.pos.dist(circle.pos) - this.fullRadius);
         if (distance < this.repelRadius) {
           let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
@@ -69,7 +74,7 @@ class Circle {
 
   attractNeighbours() {
     for (let circle of Circle.circles) {
-      if (circle !== this && circle !== Circle.mainCircle) {
+      if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
         let distance = int(this.pos.dist(circle.pos) + this.fullRadius);
         if (distance > this.attractRadius) {
           let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
@@ -78,7 +83,6 @@ class Circle {
       }
     }
   }
-
 
   drawLine() {
     push();
@@ -94,17 +98,17 @@ class Circle {
     if (IS_DEBUG) {
       //draw attract radius
       strokeWeight(1);
-      fill(202, 251, 222, 100);
+      fill(this.attractColor);
       ellipse(this.pos.x, this.pos.y, this.attractRadius * 2);
       //draw repel radius
       strokeWeight(1);
-      fill(251, 202, 251, 170);
+      fill(this.repelColor);
       ellipse(this.pos.x, this.pos.y, this.repelRadius * 2);
     }
     //draw circle
     stroke(0);
     strokeWeight(this.strokeWidth);
-    fill(255, 204, 0);
+    this.isHovered() ? fill(this.bodyHoverColor) : fill(this.bodyColor);
     ellipse(this.pos.x, this.pos.y, this.radius * 2);
     //draw text
     textSize(this.baseRadius);
@@ -113,6 +117,17 @@ class Circle {
     fill(0);
     text(i, this.pos.x, this.pos.y);
     pop();
+  }
+
+  isHovered() {
+    return dist(this.pos.x, this.pos.y, mouseX, mouseY) < this.fullRadius;
+  }
+
+  drag() {
+    if (this.isHovered()) {
+      this.pos = new p5.Vector(mouseX, mouseY);
+      this.isDragged = true;
+    }
   }
 
   static drawBounds() {
