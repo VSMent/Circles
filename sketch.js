@@ -9,8 +9,10 @@ function setup() {
 
 function draw() {
   background(255);
-  drawGrid();
-  Circle.drawBounds();
+  if (IS_DEBUG) {
+    drawGrid();
+    Circle.drawBounds();
+  }
   drawLines();
   drawCircles();
   updatePositions();
@@ -21,7 +23,7 @@ let circles;
 function init() {
   let bounds = 10;
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 60; i++) {
     new Circle(Math.floor((Math.random() * (width - bounds * 2)) + bounds), Math.floor((Math.random() * (height - bounds * 2)) + bounds), false);
   }
   circles = Circle.circles;
@@ -50,10 +52,9 @@ function drawCircles() {
   }
 }
 
-function drawGrid() {
-  let step = 10;
+function drawGrid(step = 10) {
   push();
-  stroke(192,192,192,100);
+  stroke(192, 192, 192, 100);
   for (let i = step; i < width; i += step) {
     line(i, 0, i, height);
   }
