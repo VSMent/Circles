@@ -1,5 +1,5 @@
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(800, 700);
   init();
   frameRate(30);
   console.log(circles);
@@ -22,8 +22,9 @@ let circles;
 
 function init() {
   let bounds = 10;
+  Circle.mainCircle = new Circle(width / 2, height / 2, true);
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 30; i++) {
     new Circle(Math.floor((Math.random() * (width - bounds * 2)) + bounds), Math.floor((Math.random() * (height - bounds * 2)) + bounds), false);
   }
   circles = Circle.circles;

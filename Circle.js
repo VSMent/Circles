@@ -1,25 +1,24 @@
 class Circle {
-  baseRadius = 25;
-  baseRepelRadius = this.baseRadius + 15;
+  radius = 25;
+  repelRadius = this.radius + 15;
   strokeWidth = 3;
   repelSpeed = 1;
+  attractRadius = 0;
   static minX = 0;
   static maxX = 100;
   static minY = 0;
   static maxY = 100;
   static circles = []
-  static mainCircle = new Circle(400, 300, true);
+  static mainCircle;
 
   constructor(x, y, isMain = false) {
     this.pos = new p5.Vector(x, y);
     this.isMain = isMain;
     if (isMain) {
-      this.radius = 1.5 * this.baseRadius;
-      this.repelRadius = 3 * this.baseRepelRadius;
+      this.radius *= 1.5;
+      this.repelRadius *= 3;
       this.repelSpeed = 10;
-    } else {
-      this.radius = this.baseRadius;
-      this.repelRadius = this.baseRepelRadius;
+      this.attractRadius = 3 * this.repelRadius;
     }
     this.fullRadius = this.radius + this.strokeWidth;
     Circle.circles.push(this);
@@ -27,7 +26,12 @@ class Circle {
 
   updatePositions(i) {
     this.checkBounds(i);
+    // if (this !== Circle.mainCircle) {
     this.repelNeighbours();
+    // }
+    if (this === Circle.mainCircle) {
+      this.attractNeighbours();
+    }
   }
 
   checkBounds(i) {
@@ -63,6 +67,18 @@ class Circle {
     }
   }
 
+  attractNeighbours() {
+    for (let circle of Circle.circles) {
+      if (circle !== this && circle !== Circle.mainCircle) {
+        let distance = int(this.pos.dist(circle.pos) + this.fullRadius);
+        if (distance > this.attractRadius) {
+          let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
+          circle.pos.add(dirrection.mult(this.repelSpeed));
+        }
+      }
+    }
+  }
+
 
   drawLine() {
     push();
@@ -75,10 +91,14 @@ class Circle {
 
   draw(i) {
     push();
-    //draw repel radius
     if (IS_DEBUG) {
+      //draw attract radius
       strokeWeight(1);
-      fill(251, 202, 251, 200);
+      fill(202, 251, 222, 100);
+      ellipse(this.pos.x, this.pos.y, this.attractRadius * 2);
+      //draw repel radius
+      strokeWeight(1);
+      fill(251, 202, 251, 170);
       ellipse(this.pos.x, this.pos.y, this.repelRadius * 2);
     }
     //draw circle
