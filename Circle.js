@@ -32,8 +32,8 @@ class Circle {
   updatePositions() {
     if (!this.isDragged) {
       this.checkBounds();
-      this.repelNeighbours();
     }
+    this.repelNeighbours();
     if (this === Circle.mainCircle) {
       this.attractNeighbours();
     }
