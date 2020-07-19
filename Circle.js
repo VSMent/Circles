@@ -1,53 +1,142 @@
 class Circle {
-    static first(cX, cY, radius, canvas, context, main=true, array){
-        this.cX = cX;
-        this.cY = cY;
-        this.radius = radius;
-        this.canvas = canvas;
-        // this.context = context;
-        this.main = main;
+  radius = 25;
+  repelRadius = this.radius + 15;
+  strokeWidth = 3;
+  repelSpeed = 1;
+  attractRadius = 0;
+  bodyColor = color(255, 204, 0);
+  repelColor = color(251, 202, 251, 170);
+  attractColor = color(202, 251, 222, 100);
+  bodyHoverColor = color(204, 163, 0);
+  isDragged = false;
+  static minX = 0;
+  static maxX = 100;
+  static minY = 0;
+  static maxY = 100;
+  static circles = []
+  static mainCircle;
 
-        if(array){
-            array.push(this);
-
-            this.context = this.canvas.getContext('2d');
-            this.canvas.setAttribute('width', this.radius*2);
-            this.canvas.setAttribute('height', this.radius*2);
-
-            // array[array.length-1].drawIn();
-        }
+  constructor(x, y, isMain = false) {
+    this.pos = new p5.Vector(x, y);
+    this.isMain = isMain;
+    if (isMain) {
+      this.radius *= 1.5;
+      this.repelRadius *= 3;
+      this.repelSpeed = 10;
+      this.attractRadius = 3 * this.repelRadius;
     }
+    this.fullRadius = this.radius + this.strokeWidth;
+    Circle.circles.push(this);
+  }
 
+  updatePositions() {
+    if (!this.isDragged) {
+      this.checkBounds();
+    }
+    this.repelNeighbours();
+    if (this === Circle.mainCircle) {
+      this.attractNeighbours();
+    }
+  }
 
+  checkBounds() {
+    let dx = 0, dy = 0;
 
-  constructor(mainC,marX,marY,radius) {
-      let c = new Circle(mainC.cX + marX, mainC.cY + marY, radius, mainC.canvas.cloneNode());
-      c.context = c.canvas.getContext('2d');
-      c.main = false;
+    // X <, >
+    if (this.pos.x - this.fullRadius < Circle.minX) {
+      dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.minX + this.fullRadius, this.pos.y)).normalize().mult(-this.repelSpeed).x;
+    }
+    if (this.pos.x + this.fullRadius > Circle.maxX) {
+      dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.maxX - this.fullRadius, this.pos.y)).normalize().mult(-this.repelSpeed).x;
+    }
+    // Y -, _
+    if (this.pos.y - this.fullRadius < Circle.minY) {
+      dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.minY + this.fullRadius)).normalize().mult(-this.repelSpeed).y;
+    }
+    if (this.pos.y + this.fullRadius > Circle.maxY) {
+      dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.maxY - this.fullRadius)).normalize().mult(-this.repelSpeed).y;
+    }
+    this.pos.add(new p5.Vector(dx, dy));
 
   }
 
-
-  drawIn(){
-    // image, sourX, sourY, sWidt, sHeig, destX, destY, dWidt, dHeig
-    this.context.beginPath();
-    this.context.arc(this.radius, this.radius, 19, 0, 2*Math.PI);
-    this.context.closePath();
-    this.context.fill();
-    this.context.stroke();
+  repelNeighbours() {
+    for (let circle of Circle.circles) {
+      if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
+        let distance = int(this.pos.dist(circle.pos) - this.fullRadius);
+        if (distance < this.repelRadius) {
+          let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
+          circle.pos.add(dirrection.mult(-this.repelSpeed));
+        }
+      }
+    }
   }
 
-  drawOut(mainContext){
-    // image, sourX, sourY, sWidt, sHeig, destX, destY, dWidt, dHeig
-    mainContext.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, this.cX, this.cY, this.radius, this.radius);
+  attractNeighbours() {
+    for (let circle of Circle.circles) {
+      if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
+        let distance = int(this.pos.dist(circle.pos) + this.fullRadius);
+        if (distance > this.attractRadius) {
+          let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
+          circle.pos.add(dirrection.mult(this.repelSpeed));
+        }
+      }
+    }
   }
 
-  changeFill(color){
-    this.context.fillStyle = color;
-
+  drawLine() {
+    push();
+    stroke(192, 192, 192);
+    strokeWeight(1);
+    // draw line
+    this !== Circle.mainCircle && line(this.pos.x, this.pos.y, Circle.mainCircle.pos.x, Circle.mainCircle.pos.y);
+    pop();
   }
 
-  changeStroke(color){
+  draw(i) {
+    push();
+    if (IS_DEBUG) {
+      //draw attract radius
+      strokeWeight(1);
+      fill(this.attractColor);
+      ellipse(this.pos.x, this.pos.y, this.attractRadius * 2);
+      //draw repel radius
+      strokeWeight(1);
+      fill(this.repelColor);
+      ellipse(this.pos.x, this.pos.y, this.repelRadius * 2);
+    }
+    //draw circle
+    stroke(0);
+    strokeWeight(this.strokeWidth);
+    this.isHovered() ? fill(this.bodyHoverColor) : fill(this.bodyColor);
+    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+    //draw text
+    textSize(this.baseRadius);
+    textAlign(CENTER, CENTER);
+    noStroke();
+    fill(0);
+    text(i, this.pos.x, this.pos.y);
+    pop();
+  }
 
+  isHovered() {
+    return dist(this.pos.x, this.pos.y, mouseX, mouseY) < this.fullRadius;
+  }
+
+  drag() {
+    if (this.isHovered()) {
+      this.pos = new p5.Vector(mouseX, mouseY);
+      this.isDragged = true;
+    }
+  }
+
+  static drawBounds() {
+    push();
+    stroke(255, 0, 0);
+    strokeWeight(1);
+    noFill();
+    rectMode(CORNERS);
+    rect(Circle.minX, Circle.minY, Circle.maxX, Circle.maxY);
+    pop();
   }
 }

@@ -1,13 +1,20 @@
 * {
   margin: 0px;
-  padding: 0px; }
+  padding: 0px;
+}
 
 canvas {
-  margin: 0px; }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid black;
+}
 
 #m_coords {
   position: fixed;
   top: 0px;
-  right: 50px; }
+  right: 50px;
+}
 
 /*# sourceMappingURL=style.css.map */
