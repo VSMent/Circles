@@ -31,7 +31,7 @@ class Circle {
 
   updatePositions() {
     if (!this.isDragged) {
-      this.checkBounds();
+      this.stayInBounds();
     }
     this.repelNeighbours();
     if (this === Circle.mainCircle) {
@@ -39,7 +39,7 @@ class Circle {
     }
   }
 
-  checkBounds() {
+  stayInBounds() {
     let dx = 0, dy = 0;
 
     // X <, >
@@ -65,8 +65,8 @@ class Circle {
       if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
         let distance = int(this.pos.dist(circle.pos) - this.fullRadius);
         if (distance < this.repelRadius) {
-          let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
-          circle.pos.add(dirrection.mult(-this.repelSpeed));
+          let direction = p5.Vector.sub(this.pos, circle.pos).normalize();
+          circle.pos.add(direction.mult(-this.repelSpeed));
         }
       }
     }
@@ -77,8 +77,8 @@ class Circle {
       if (circle !== this && circle !== Circle.mainCircle && !circle.isDragged) {
         let distance = int(this.pos.dist(circle.pos) + this.fullRadius);
         if (distance > this.attractRadius) {
-          let dirrection = p5.Vector.sub(this.pos, circle.pos).normalize();
-          circle.pos.add(dirrection.mult(this.repelSpeed));
+          let direction = p5.Vector.sub(this.pos, circle.pos).normalize();
+          circle.pos.add(direction.mult(this.repelSpeed));
         }
       }
     }
@@ -130,7 +130,7 @@ class Circle {
     }
   }
 
-  static drawBounds() {
+  static drawForceBounds() {
     push();
     stroke(255, 0, 0);
     strokeWeight(1);

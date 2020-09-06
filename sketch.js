@@ -11,9 +11,9 @@ function draw() {
   background(255);
   if (IS_DEBUG) {
     drawGrid();
-    Circle.drawBounds();
+    Circle.drawForceBounds();
   }
-  drawLines();
+  drawConnections();
   drawCircles();
   updatePositions();
 }
@@ -21,14 +21,16 @@ function draw() {
 let circles;
 
 function init() {
-  let bounds = 10;
+  let bounds = 10;  // offset from canvas border
   Circle.mainCircle = new Circle(width / 2, height / 2, true);
 
+  // Create secondary circles
   for (let i = 0; i < 30; i++) {
     new Circle(Math.floor((Math.random() * (width - bounds * 2)) + bounds), Math.floor((Math.random() * (height - bounds * 2)) + bounds));
   }
   circles = Circle.circles;
 
+  // Set circle bounds
   Circle.minX = bounds;
   Circle.minY = bounds;
   Circle.maxX = width - bounds;
@@ -41,7 +43,7 @@ function updatePositions() {
   }
 }
 
-function drawLines() {
+function drawConnections() {
   for (let i = 0; i < circles.length; i++) {
     circles[i].drawLine();
   }
