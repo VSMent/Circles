@@ -9,7 +9,7 @@ class Circle {
     radius = 25;
     repelRadius = this.radius + 15;
     strokeWidth = 3;
-    repelMultiplier = 1;
+    forcePower = 3;
     attractRadius = 0;
     bodyColor = color(255, 204, 0);
     bodyHoverColor = color(204, 163, 0);
@@ -56,7 +56,7 @@ class Circle {
         if (isMain) {
             this.radius *= 1.5;
             this.repelRadius *= 3;
-            this.repelMultiplier = 10;
+            this.forcePower = 10;
             this.attractRadius = 3 * this.repelRadius;
         }
         this.fullRadius = this.radius + this.strokeWidth;
@@ -88,17 +88,17 @@ class Circle {
 
         // X <, >
         if (this.pos.x - this.fullRadius < Circle.minX) {
-            dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.minX + this.fullRadius, this.pos.y)).normalize().mult(-this.repelMultiplier).x;
+            dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.minX + this.fullRadius, this.pos.y)).normalize().mult(-this.forcePower).x;
         }
         if (this.pos.x + this.fullRadius > Circle.maxX) {
-            dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.maxX - this.fullRadius, this.pos.y)).normalize().mult(-this.repelMultiplier).x;
+            dx = p5.Vector.sub(this.pos, new p5.Vector(Circle.maxX - this.fullRadius, this.pos.y)).normalize().mult(-this.forcePower).x;
         }
         // Y -, _
         if (this.pos.y - this.fullRadius < Circle.minY) {
-            dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.minY + this.fullRadius)).normalize().mult(-this.repelMultiplier).y;
+            dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.minY + this.fullRadius)).normalize().mult(-this.forcePower).y;
         }
         if (this.pos.y + this.fullRadius > Circle.maxY) {
-            dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.maxY - this.fullRadius)).normalize().mult(-this.repelMultiplier).y;
+            dy = p5.Vector.sub(this.pos, new p5.Vector(this.pos.x, Circle.maxY - this.fullRadius)).normalize().mult(-this.forcePower).y;
         }
         this.pos.add(new p5.Vector(dx, dy));
 
@@ -114,7 +114,7 @@ class Circle {
                 let distance = int(this.pos.dist(circle.pos) - this.fullRadius);
                 if (distance < this.repelRadius) {
                     let direction = p5.Vector.sub(this.pos, circle.pos).normalize();
-                    circle.pos.add(direction.mult(-this.repelMultiplier));
+                    circle.pos.add(direction.mult(-this.forcePower));
                 }
             }
         }
@@ -131,7 +131,7 @@ class Circle {
                 let distance = int(this.pos.dist(circle.pos) + this.fullRadius);
                 if (distance > this.attractRadius) {
                     let direction = p5.Vector.sub(this.pos, circle.pos).normalize();
-                    circle.pos.add(direction.mult(this.repelMultiplier));
+                    circle.pos.add(direction.mult(this.forcePower));
                 }
             }
         }
@@ -153,9 +153,9 @@ class Circle {
     /**
      * @public
      * Used to draw circle
-     * @param {string} i String that will be drawn on the circle
+     * @param {string} str String that will be drawn on the circle
      */
-    draw(i) {
+    draw(str) {
         push();
         if (IS_DEBUG) {
             //draw attract radius
@@ -177,7 +177,7 @@ class Circle {
         textAlign(CENTER, CENTER);
         noStroke();
         fill(0);
-        text(i, this.pos.x, this.pos.y);
+        text(str, this.pos.x, this.pos.y);
         pop();
     }
 

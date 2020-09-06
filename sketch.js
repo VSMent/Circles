@@ -19,6 +19,7 @@ function draw() {
 }
 
 let circles;
+let isDragging;
 
 /**
  * Initialize project:
@@ -26,6 +27,7 @@ let circles;
  * - Set bounds
  */
 function init() {
+    isDragging = false;
     let bounds = 10;  // offset from canvas border
     Circle.mainCircle = new Circle(width / 2, height / 2, true);
 
@@ -81,6 +83,7 @@ function mouseDragged(event) {
         for (let i = 0; i < circles.length; i++) {
             if (circles[i].isHovered()) {
                 Circle.currentlyDragging = circles[i];
+                isDragging = true;
                 break;
             }
         }
@@ -90,7 +93,14 @@ function mouseDragged(event) {
 
 function mouseReleased(event) {
     if (mouseButton === LEFT) {
-        Circle.currentlyDragging = null;
+        if (isDragging) {
+            Circle.currentlyDragging = null;
+            isDragging = false;
+        } else {
+            if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+                new Circle(mouseX, mouseY);
+            }
+        }
     }
     return false;
 }
