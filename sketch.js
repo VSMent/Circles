@@ -20,6 +20,11 @@ function draw() {
 
 let circles;
 
+/**
+ * Initialize project:
+ * - Create circles
+ * - Set bounds
+ */
 function init() {
     let bounds = 10;  // offset from canvas border
     Circle.mainCircle = new Circle(width / 2, height / 2, true);
@@ -55,6 +60,10 @@ function drawCircles() {
     }
 }
 
+/**
+ * Draws grid with defined step
+ * @param {number} step pixels between lines
+ */
 function drawGrid(step = 10) {
     push();
     stroke(192, 192, 192, 100);
